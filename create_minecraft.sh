@@ -12,6 +12,14 @@ ACI_STR_AN_CAND="${ACI_RES_GRP}$(uuidgen)"
 ACI_STR_AN_CAND=$(echo $ACI_STR_AN_CAND | tr [A-Z] [a-z] | sed 's/\-//g')
 readonly ACI_STR_AN=${ACI_STR_AN_CAND:0:24}
 
+# Checking if Resource Group exists
+echo "Checking Resource Group..."
+res=$(az group show -g $ACI_RES_GRP -o tsv --query "properties.provisioningState" 2>&1)
+if [ "${res:0:5}" != "ERROR" ]; then
+	echo "The Resource Group, ${ACI_RES_GRP} has already existed."
+	exit
+fi
+
 # Create Resource Group
 echo "Creating Resource Group..."
 res=$(az group create -l $ACI_RES_LOC -g $ACI_RES_GRP -o tsv --query "properties.provisioningState")
@@ -34,7 +42,7 @@ if [ "$res" != "true" ]; then
 	az group delete --yes --no-wait -g $ACI_RES_GRP
 	exit
 fi
-STORAGE_KEY=$(az storage account keys list -g $ACI_RES_GRP --account-name $ACI_STR_AN --query "[0].value" -o tsv) 
+STORAGE_KEY=$(az storage account keys list -g $ACI_RES_GRP --account-name $ACI_STR_AN --query "[0].value" -o tsv)
 
 # Create the container
 echo "Creating Container..."
@@ -44,34 +52,35 @@ res=$(az container create --image itzg/minecraft-server -g $ACI_RES_GRP -n $ACI_
 	-e EULA=TRUE ENABLE_RCON=true \
 	RCON_PASSWORD=$RCON_PASSWORD \
 	--azure-file-volume-account-name $ACI_STR_AN \
-	--azure-file-volume-account-key $STORAGE_KEY \
+	--azure-file-volume-account-key "$STORAGE_KEY" \
 	--azure-file-volume-share-name $ACI_STR_SH_NAME \
 	--azure-file-volume-mount-path /data/ \
 	-o tsv --query "provisioningState")
+
 if [ "$res" != "Succeeded" ]; then
 	az group delete --yes --no-wait -g $ACI_RES_GRP
 	exit
 fi
 ipaddress=$(az container show -g $ACI_RES_GRP -n $ACI_CNT_NAME -o tsv --query "ipAddress.ip")
 
-echo << EOF
+cat << EOF > minecraft_container_settings.txt
 Your Minecraft Container (${ipaddress}) has been successfully created!
 
 Command to stop the container:
-az container delete -g $ACI_RES_GRP -n $ACI_CNT_NAME
+az container delete -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME}
 
-Command to redeploy the container and how to know the IP Address:
-az container create --image itzg/minecraft-server -g $ACI_RES_GRP -n $ACI_CNT_NAME \
-	--ip-address Public --ports 25565 25575 \
-	--cpu 2 --memory 8 \
-	-e ENABLE_RCON=true \
-	RCON_PASSWORD=$RCON_PASSWORD \
-	--azure-file-volume-account-name $ACI_STR_AN \
-	--azure-file-volume-account-key $STORAGE_KEY \
-	--azure-file-volume-share-name $ACI_STR_SH_NAME \
+Commands to redeploy the container and how to know the IP Address:
+az container create --image itzg/minecraft-server -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME} \\
+	--ip-address Public --ports 25565 25575 \\
+	--cpu 2 --memory 8 \\
+	-e ENABLE_RCON=true \\
+	RCON_PASSWORD=${RCON_PASSWORD} \\
+	--azure-file-volume-account-name ${ACI_STR_AN} \\
+	--azure-file-volume-account-key "${STORAGE_KEY}" \\
+	--azure-file-volume-share-name ${ACI_STR_SH_NAME} \\
 	--azure-file-volume-mount-path /data/
-echo $(az container show -g $ACI_RES_GRP -n $ACI_CNT_NAME -o tsv --query "ipAddress.ip")
+az container show -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME} -o tsv --query "ipAddress.ip"
 
 Command to delete all the data:
-az group delete --yes --no-wait -g $ACI_RES_GRP
+az group delete --yes --no-wait -g ${ACI_RES_GRP}
 EOF
