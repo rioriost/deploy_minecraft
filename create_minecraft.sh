@@ -54,7 +54,7 @@ if [ "$res" != "Succeeded" ]; then
 fi
 ipaddress=$(az container show -g $ACI_RES_GRP -n $ACI_CNT_NAME -o tsv --query "ipAddress.ip")
 
-echo <<< EOF
+echo << EOF
 Your Minecraft Container (${ipaddress}) has been successfully created!
 
 Command to stop the container:
