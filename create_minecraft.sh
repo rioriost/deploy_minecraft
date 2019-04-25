@@ -55,7 +55,7 @@ fi
 ipaddress=$(az container show -g $ACI_RES_GRP -n $ACI_CNT_NAME -o tsv --query "ipAddress.ip")
 
 echo <<< EOF
-Your Mincraft Container (${ipaddress}) has been successfully created!
+Your Minecraft Container (${ipaddress}) has been successfully created!
 
 Command to stop the container:
 az container delete -g $ACI_RES_GRP -n $ACI_CNT_NAME
