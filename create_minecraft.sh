@@ -46,8 +46,9 @@ STORAGE_KEY=$(az storage account keys list -g $ACI_RES_GRP --account-name $ACI_S
 
 # Create the container
 echo "Creating Container..."
-res=$(az container create --image itzg/minecraft-server -g $ACI_RES_GRP -n $ACI_CNT_NAME \
+res=$(az container create --image rioriost/minecraft-server -g $ACI_RES_GRP -n $ACI_CNT_NAME \
 	--ip-address Public --ports 25565 25575 \
+	--dns-name-label $ACI_CNT_NAME \
 	--cpu 2 --memory 8 \
 	-e EULA=TRUE ENABLE_RCON=true \
 	RCON_PASSWORD=$RCON_PASSWORD \
@@ -65,14 +66,15 @@ ipaddress=$(az container show -g $ACI_RES_GRP -n $ACI_CNT_NAME -o tsv --query "i
 
 cat << EOF | tee minecraft_container_settings.txt
 
-Your Minecraft Container (${ipaddress}) has been successfully created!
+Your Minecraft Container ("${ACI_CNT_NAME}.${ACI_RES_LOC}.azurecontainer.io", ${ipaddress}) has been successfully created!
 
 Command to stop the container:
 az container delete -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME}
 
-Commands to redeploy the container and how to know the IP Address:
-az container create --image itzg/minecraft-server -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME} \\
+Commands to redeploy the container:
+az container create --image rioriost/minecraft-server -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME} \\
 	--ip-address Public --ports 25565 25575 \\
+	--dns-name-label ${ACI_CNT_NAME} \\
 	--cpu 2 --memory 8 \\
 	-e ENABLE_RCON=true \\
 	RCON_PASSWORD=${RCON_PASSWORD} \\
@@ -80,7 +82,6 @@ az container create --image itzg/minecraft-server -g ${ACI_RES_GRP} -n ${ACI_CNT
 	--azure-file-volume-account-key "${STORAGE_KEY}" \\
 	--azure-file-volume-share-name ${ACI_STR_SH_NAME} \\
 	--azure-file-volume-mount-path /data/
-az container show -g ${ACI_RES_GRP} -n ${ACI_CNT_NAME} -o tsv --query "ipAddress.ip"
 
 Command to delete all the data:
 az group delete --yes --no-wait -g ${ACI_RES_GRP}
