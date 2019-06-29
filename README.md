@@ -5,6 +5,8 @@ Only what you need to do is changing 6 readonly parameters in the beggining of t
 
 Before deploying a container, you must install Azure CLI (https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest) and subscribe to Azure.
 
+If you have subscribed to Azure, it's the easiest to run the script on Cloud Shell from Azure Portal.
+
 Dockerfile
 https://github.com/rioriost/dockerfiles/tree/master/minecraft-server
 
