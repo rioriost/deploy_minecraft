@@ -29,7 +29,7 @@ fi
 
 # Create the storage account with the parameters
 echo "Creating Storage Account..."
-res=$(az storage account create -g $ACI_RES_GRP -n $ACI_STR_AN -l $ACI_RES_LOC --sku Standard_LRS -o tsv --query "provisioningState")
+res=$(az storage account create -g $ACI_RES_GRP -n $ACI_STR_AN -l $ACI_RES_LOC --sku Premium_LRS --kind FileStorage -o tsv --query "provisioningState")
 if [ "$res" != "Succeeded" ]; then
 	az group delete --yes --no-wait -g $ACI_RES_GRP
 	exit
