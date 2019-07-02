@@ -12,3 +12,5 @@ https://github.com/rioriost/dockerfiles/tree/master/minecraft-server
 
 Docker image
 https://cloud.docker.com/u/rioriost/repository/docker/rioriost/minecraft-server
+
+If you want to play with lots of your friends, please consider to use 'create_minecraft_vm.sh' to deploy a VM. ACI has limited vCPU and memory. e.g. 2vCPU and 8GB mem in Japan East region. You can use more powerful VM than ACI.
