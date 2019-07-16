@@ -1,6 +1,8 @@
 # deploy_minecraft
 
-Script ini mudah, create_minecraft.sh merekacipta minecraft pelayan seperti bekas untuk ACI, keadaan bekas Azure, dibolehkan untuk dihubungkan dari jauh dengan MCRCON. Hanya apa yang anda perlu lakukan adalah mengubah 6 parameter readonly dalam permulaan skrip. Sebelum menggunakan bekas, anda mesti memasang CLI Azure (https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest) dan melanggan Azure.
+Script ini mudah, create_minecraft.sh merekacipta minecraft pelayan seperti bekas untuk ACI, keadaan bekas Azure, dibolehkan untuk dihubungkan dari jauh dengan MCRCON. Hanya apa yang anda perlu lakukan adalah mengubah 6 parameter readonly dalam permulaan skrip.
+
+Sebelum menggunakan bekas, anda mesti memasang CLI Azure (https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest) dan melanggan Azure.
 
 Jika anda telah melanggan ke Azure, ia adalah yang paling mudah untuk Jalankan skrip pada Shell awan daripada Azure Portal. 
 
