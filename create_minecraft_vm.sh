@@ -4,14 +4,14 @@
 readonly AZURE_ACCT="rifujita" 
 readonly RES_LOC="japaneast"
 readonly RES_GRP="${AZURE_ACCT}mcrg"
-readonly VM_SIZE="Standard_D4s_v3"
+readonly VM_SIZE="Standard_D8s_v3"
 readonly VM_NAME="${RES_GRP}vm"
 readonly RCON_PASSWORD="testpass"
 
 # Checking if Resource Group exists
 echo "Checking Resource Group..."
 res=$(az group show -g $RES_GRP -o tsv --query "properties.provisioningState" 2>&1)
-if [ "${res:0:5}" != "ERROR" ]; then
+if [ "$res" = "Succeeded" ]; then
 	echo "The Resource Group, ${RES_GRP} has already existed."
 	exit
 fi
