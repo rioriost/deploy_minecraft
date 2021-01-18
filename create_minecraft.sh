@@ -14,8 +14,8 @@ readonly ACI_STR_AN=${ACI_STR_AN_CAND:0:24}
 
 # Checking if Resource Group exists
 echo "Checking Resource Group..."
-res=$(az group show -g $ACI_RES_GRP -o tsv --query "properties.provisioningState" 2>&1)
-if [ "${res:0:5}" != "ERROR" ]; then
+res=$(az group show -g $ACI_RES_GRP -o tsv --query "properties.provisioningState" 2>&1 | cut -d " " -f 1)
+if [ "${res}" != "ResourceNotFoundError:" ]; then
 	echo "The Resource Group, ${ACI_RES_GRP} has already existed."
 	exit
 fi
